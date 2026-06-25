@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUsers, faPlus, faTrashCan } from "@fortawesome/free-solid-svg-icons";
+import { faUsers, faPlus, faTrashCan, faPen, faXmark, faCheck } from "@fortawesome/free-solid-svg-icons";
+
 
 
 interface Member {
@@ -23,6 +24,15 @@ export default function MembersPage() {
   const [dob, setDob] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+
+  // Edit state
+  const [editingMember, setEditingMember] = useState<Member | null>(null);
+  const [editName, setEditName] = useState("");
+  const [editPhone, setEditPhone] = useState("");
+  const [editEmail, setEditEmail] = useState("");
+  const [editDob, setEditDob] = useState("");
+  const [updating, setUpdating] = useState(false);
+
 
 
   const fetchMembers = useCallback(async () => {
@@ -84,6 +94,42 @@ export default function MembersPage() {
       console.error("Failed to delete member:", err);
     }
   };
+
+  const startEdit = (member: Member) => {
+    setEditingMember(member);
+    setEditName(member.name || "");
+    setEditPhone(member.phone || "");
+    setEditEmail(member.email || "");
+    setEditDob(member.dob || "");
+  };
+
+  const handleUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingMember || !editName.trim() || updating) return;
+
+    setUpdating(true);
+    try {
+      const res = await fetch(`/api/members/${editingMember.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: editName.trim(),
+          phone: editPhone.trim() || null,
+          email: editEmail.trim() || null,
+          dob: editDob || null,
+        }),
+      });
+      if (res.ok) {
+        setEditingMember(null);
+        await fetchMembers();
+      }
+    } catch (err) {
+      console.error("Failed to update member:", err);
+    } finally {
+      setUpdating(false);
+    }
+  };
+
 
   const formatDate = (dateStr: string | null) => {
     if (!dateStr) return "—";
@@ -244,14 +290,25 @@ export default function MembersPage() {
                       <td>{formatDOB(member.dob)}</td>
                       <td>{formatDate(member.createdAt)}</td>
                       <td className="text-right">
-                        <button
-                          onClick={() => handleDelete(member.id, member.name)}
-                          className="btn-danger text-xs py-1.5 px-3 flex items-center justify-center gap-1.5 ml-auto"
-                        >
-                          <FontAwesomeIcon icon={faTrashCan} className="w-3 h-3" />
-                          Remove
-                        </button>
+                        <div className="flex gap-2 justify-end">
+                          <button
+                            onClick={() => startEdit(member)}
+                            className="btn-secondary text-xs py-1.5 px-3 flex items-center justify-center gap-1.5"
+                            style={{ border: '1px solid rgba(255,255,255,0.06)' }}
+                          >
+                            <FontAwesomeIcon icon={faPen} className="w-3 h-3" />
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleDelete(member.id, member.name)}
+                            className="btn-danger text-xs py-1.5 px-3 flex items-center justify-center gap-1.5"
+                          >
+                            <FontAwesomeIcon icon={faTrashCan} className="w-3 h-3" />
+                            Remove
+                          </button>
+                        </div>
                       </td>
+
                     </tr>
                   ))}
                 </tbody>
@@ -293,6 +350,94 @@ export default function MembersPage() {
               </div>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Edit Member Modal */}
+      {editingMember && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md fade-in">
+          <div className="glass-card w-full max-w-lg relative slide-up border border-violet-500/20" style={{ background: 'rgba(10, 14, 26, 0.95)' }}>
+            <button
+              onClick={() => setEditingMember(null)}
+              className="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors"
+            >
+              <FontAwesomeIcon icon={faXmark} className="w-4 h-4" />
+            </button>
+            <h2 className="text-lg font-bold text-white mb-6">Edit Member Details</h2>
+            <form onSubmit={handleUpdate} className="space-y-4">
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wider mb-2 text-slate-400">
+                  Full Name *
+                </label>
+                <input
+                  type="text"
+                  value={editName}
+                  onChange={(e) => setEditName(e.target.value)}
+                  className="input-field"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wider mb-2 text-slate-400">
+                  Phone Number
+                </label>
+                <input
+                  type="tel"
+                  value={editPhone}
+                  onChange={(e) => setEditPhone(e.target.value)}
+                  className="input-field"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wider mb-2 text-slate-400">
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  value={editEmail}
+                  onChange={(e) => setEditEmail(e.target.value)}
+                  className="input-field"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wider mb-2 text-slate-400">
+                  Date of Birth
+                </label>
+                <input
+                  type="date"
+                  value={editDob}
+                  onChange={(e) => setEditDob(e.target.value)}
+                  className="input-field"
+                />
+              </div>
+              <div className="flex justify-end gap-3 pt-4 border-t border-white/5">
+                <button
+                  type="button"
+                  onClick={() => setEditingMember(null)}
+                  className="btn-secondary"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={updating || !editName.trim()}
+                  className="btn-primary flex items-center gap-2"
+                >
+                  {updating ? (
+                    <>
+                      <span className="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      <FontAwesomeIcon icon={faCheck} className="w-3.5 h-3.5" />
+                      Save Changes
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </div>
