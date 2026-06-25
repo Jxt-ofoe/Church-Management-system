@@ -1,1 +1,1 @@
-export const CHURCH_NAME = "Your Church Name";
+export const CHURCH_NAME = "Belivers Loveworld UG, Legon";
