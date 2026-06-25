@@ -1,0 +1,29 @@
+import { MetadataRoute } from "next";
+import { CHURCH_NAME } from "@/lib/config";
+
+export default function manifest(): MetadataRoute.Manifest {
+  return {
+    name: CHURCH_NAME,
+    short_name: "Church Management",
+    description: `Church Management System for ${CHURCH_NAME}`,
+    start_url: "/",
+    display: "standalone",
+    background_color: "#0a0e1a",
+    theme_color: "#0a0e1a",
+    orientation: "portrait",
+    icons: [
+      {
+        src: "/icon-192.png",
+        sizes: "192x192",
+        type: "image/png",
+        purpose: "any",
+      },
+      {
+        src: "/icon-512.png",
+        sizes: "512x512",
+        type: "image/png",
+        purpose: "any",
+      },
+    ],
+  };
+}
