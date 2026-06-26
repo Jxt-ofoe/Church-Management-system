@@ -397,38 +397,40 @@ export default function ServicesPage() {
             </p>
           </div>
         ) : (
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Label</th>
-                <th>Headcount</th>
-                <th>Recorded</th>
-              </tr>
-            </thead>
-            <tbody>
-              {services.map((service, i) => (
-                <tr key={service.id} className="slide-up" style={{ animationDelay: `${i * 0.03}s` }}>
-                  <td className="font-medium text-white">
-                    {formatDate(service.date)}
-                  </td>
-                  <td>
-                    <span className="badge badge-purple">{service.label || "Service"}</span>
-                  </td>
-                  <td>
-                    <span className="font-mono font-medium text-white">
-                      {service.headcount}
-                    </span>
-                  </td>
-                  <td className="text-xs" style={{ color: 'var(--text-muted)' }}>
-                    {service.createdAt
-                      ? new Date(service.createdAt).toLocaleDateString()
-                      : "—"}
-                  </td>
+          <div className="overflow-x-auto">
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Label</th>
+                  <th>Headcount</th>
+                  <th>Recorded</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {services.map((service, i) => (
+                  <tr key={service.id} className="slide-up" style={{ animationDelay: `${i * 0.03}s` }}>
+                    <td className="font-medium text-white">
+                      {formatDate(service.date)}
+                    </td>
+                    <td>
+                      <span className="badge badge-purple">{service.label || "Service"}</span>
+                    </td>
+                    <td>
+                      <span className="font-mono font-medium text-white">
+                        {service.headcount}
+                      </span>
+                    </td>
+                    <td className="text-xs" style={{ color: 'var(--text-muted)' }}>
+                      {service.createdAt
+                        ? new Date(service.createdAt).toLocaleDateString()
+                        : "—"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
     </div>

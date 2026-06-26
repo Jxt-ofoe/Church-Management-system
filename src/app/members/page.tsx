@@ -266,53 +266,54 @@ export default function MembersPage() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           <div className={birthdaysThisMonth.length > 0 ? "lg:col-span-3" : "lg:col-span-4"}>
             <div className="glass-card p-0 overflow-hidden">
-              <table className="data-table">
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>Name</th>
-                    <th>Phone</th>
-                    <th>Email</th>
-                    <th>Date of Birth</th>
-                    <th>Date Added</th>
-                    <th className="text-right">Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {members.map((member, i) => (
-                    <tr key={member.id} className="slide-up" style={{ animationDelay: `${i * 0.03}s` }}>
-                      <td className="font-mono text-xs" style={{ color: 'var(--text-muted)' }}>
-                        {i + 1}
-                      </td>
-                      <td className="font-medium text-white">{member.name}</td>
-                      <td>{member.phone || "—"}</td>
-                      <td>{member.email || "—"}</td>
-                      <td>{formatDOB(member.dob)}</td>
-                      <td>{formatDate(member.createdAt)}</td>
-                      <td className="text-right">
-                        <div className="flex gap-2 justify-end">
-                          <button
-                            onClick={() => startEdit(member)}
-                            className="btn-secondary text-xs py-1.5 px-3 flex items-center justify-center gap-1.5"
-                            style={{ border: '1px solid rgba(255,255,255,0.06)' }}
-                          >
-                            <FontAwesomeIcon icon={faPen} className="w-3 h-3" />
-                            Edit
-                          </button>
-                          <button
-                            onClick={() => handleDelete(member.id, member.name)}
-                            className="btn-danger text-xs py-1.5 px-3 flex items-center justify-center gap-1.5"
-                          >
-                            <FontAwesomeIcon icon={faTrashCan} className="w-3 h-3" />
-                            Remove
-                          </button>
-                        </div>
-                      </td>
-
+              <div className="overflow-x-auto">
+                <table className="data-table">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Name</th>
+                      <th>Phone</th>
+                      <th>Email</th>
+                      <th>Date of Birth</th>
+                      <th>Date Added</th>
+                      <th className="text-right">Action</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {members.map((member, i) => (
+                      <tr key={member.id} className="slide-up" style={{ animationDelay: `${i * 0.03}s` }}>
+                        <td className="font-mono text-xs" style={{ color: 'var(--text-muted)' }}>
+                          {i + 1}
+                        </td>
+                        <td className="font-medium text-white">{member.name}</td>
+                        <td>{member.phone || "—"}</td>
+                        <td>{member.email || "—"}</td>
+                        <td>{formatDOB(member.dob)}</td>
+                        <td>{formatDate(member.createdAt)}</td>
+                        <td className="text-right">
+                          <div className="flex gap-2 justify-end">
+                            <button
+                              onClick={() => startEdit(member)}
+                              className="btn-secondary text-xs py-1.5 px-3 flex items-center justify-center gap-1.5"
+                              style={{ border: '1px solid rgba(255,255,255,0.06)' }}
+                            >
+                              <FontAwesomeIcon icon={faPen} className="w-3 h-3" />
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => handleDelete(member.id, member.name)}
+                              className="btn-danger text-xs py-1.5 px-3 flex items-center justify-center gap-1.5"
+                            >
+                              <FontAwesomeIcon icon={faTrashCan} className="w-3 h-3" />
+                              Remove
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
 
